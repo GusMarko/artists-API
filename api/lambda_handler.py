@@ -39,6 +39,6 @@ def lambda_handler(event, context):
     table = dynamodb.Table(os.getenv(ARTISTS_TABLE))
     id_num = uuid.uuid4()
 
-    for artist in artist_list:
+    for artist in artists_list:
         table.put_item(Item={"DataId": id_num, "ArtistName": artist})
         id_num = uuid.uuid4()
