@@ -1,14 +1,11 @@
 from requests import post, get
 import os
 import json
-from dotenv import load_dotenv
 import base64
 
 
 # test funckija
 def main():
-    # kroz modul dorenv uvozimo nase env varijable
-    load_dotenv()
 
     client_id = os.getenv("CLIENT_ID")
     client_secret = os.getenv("CLIENT_SECRET")
@@ -71,9 +68,6 @@ def get_artist(song_name):
 
     artist = track_data["tracks"]["items"][0]["album"]["artists"][0]["name"]
     return artist
-
-
-
 
 
 if __name__ == "__main__":
