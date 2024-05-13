@@ -36,7 +36,7 @@ def replace_tfvars(env, boto3_session):
     secret_key = tf_role_credentials["secret_key"]
     tfvars_path = "../iac/terraform.tfvars"
     backend_config_path = "../iac/provider.tf"
-    spotify_credentials = get_aws_secret("spotify/credentials", boto3_session)
+    spotify_credentials = get_aws_secret("/spotify/credentials", boto3_session)
     client_id = spotify_credentials["client_id"]
     client_secret = spotify_credentials["client_secret"]
 
