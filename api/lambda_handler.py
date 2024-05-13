@@ -6,6 +6,7 @@ import io
 import csv
 import scripts.spotify
 import uuid
+import urllib.parse
 
 # pravi se sesija sa s3
 s3 = boto3.client("s3")
@@ -13,8 +14,10 @@ s3 = boto3.client("s3")
 
 def lambda_handler(event, context):
     # iz metadata od eventa vadimo bucket i fajl koji nam treba
-    bucket = event["Records"][0]["bucket"]["name"]
-    key = event["Records"][0]["s3"]["object"]["key"]
+    bucket = event["Records"][0]["s3"]["bucket"]["name"]
+    key = urllib.parse.unquote_plus(
+        event["Records"][0]["s3"]["object"]["key"], encoding="utf-8"
+    )
 
     response = s3.get_object(Bucket=bucket, Key=key)
 
