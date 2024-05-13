@@ -29,7 +29,7 @@ def lambda_handler(event, context):
         for item in row:
             songs_list.append(item)
 
-    artist_list = []
+    artists_list = []
 
     for song in songs_list:
         artists_list.append(get_artist(song))
