@@ -1,5 +1,3 @@
 requests
 boto3
-io
-csv
 uuid
