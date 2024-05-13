@@ -41,6 +41,7 @@ def replace_tfvars(env, boto3_session):
     spotify_credentials = get_aws_secret("/spotify/credentials", boto3_session)
     client_id = spotify_credentials["client_id"]
     client_secret = spotify_credentials["client_secret"]
+    image = f"{os.environ.get('AWS_ACCOUNT_ID')}.dkr.ecr.{aws_region}.amazonaws.com/project1/{env}/code-images:{os.environ.get('GITHUB_RUN_ID')}"
 
     with open(tfvars_path, "r") as f:
         tfvars = f.read()
@@ -50,6 +51,7 @@ def replace_tfvars(env, boto3_session):
     tfvars = tfvars.replace("env_placeholder", env)
     tfvars = tfvars.replace("client_id_placeholder", client_id)
     tfvars = tfvars.replace("client_secret_placeholder", client_secret)
+    tfvars = tfvars.replace("image_uri_placeholder", image)
     with open(tfvars_path, "w") as f:
         f.write(tfvars)
 
