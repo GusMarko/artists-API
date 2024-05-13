@@ -4,7 +4,7 @@ import os
 import boto3
 import io
 import csv
-import scripts.spotify
+from scripts.spotify import *
 import uuid
 import urllib.parse
 
