@@ -36,11 +36,11 @@ def lambda_handler(event, context):
 
     ### upisivanje artista iz liste u dynamo db
     dynamodb = boto3.client("dynamodb")
+    table = dynamodb.Table("ARTISTS_TABLE")
     id_num = uuid.uuid4()
 
     for artist in artists_list:
-        dynamodb.put_item(
+        table.put_item(
             Item={"DataId": id_num, "ArtistName": artist},
-            TableName=os.getenv("ARTISTS_TABLE"),
         )
         id_num = uuid.uuid4()
