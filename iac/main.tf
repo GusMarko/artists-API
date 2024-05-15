@@ -125,7 +125,7 @@ resource "aws_lambda_function" "main" {
   function_name = "project1-artists-api-${var.env}"
   role          = aws_iam_role.main.arn
   memory_size   = 128
-  timeout       = 3
+  timeout       = 10
   package_type  = "Image"
   image_uri     = var.image_uri
 
