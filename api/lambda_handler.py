@@ -35,8 +35,8 @@ def lambda_handler(event, context):
         artists_list.append(get_artist(song))
 
     ### upisivanje artista iz liste u dynamo db
-    dynamodb = boto3.client("dynamodb")
-    table = dynamodb.Table("ARTISTS_TABLE")
+    dynamodb = boto3.resource("dynamodb")
+    table = dynamodb.Table(os.getenv("ARTISTS_TABLE"))
     id_num = uuid.uuid4()
 
     for artist in artists_list:
