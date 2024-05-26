@@ -1,0 +1,64 @@
+name: "Deploy Code"
+
+on:
+  push:
+    branches:
+      - dev
+      - main
+
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+  IMAGE_NAME: "artists-api"
+
+jobs:
+  DeployInfra:
+    name: Execute Terraform code
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: setup python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Configure terraform and pipeline values
+        id: pipeline_config
+        run: |
+          cd devops_helper_scripts
+          pip install boto3
+          python3 configure_values.py
+
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{env.AWS_ACCESS_KEY_ID}}
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY}}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login_ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build Docker image
+        run: |
+          docker build -t ${{env.IMAGE_NAME}}:$GITHUB_RUN_ID ./api/
+          docker tag ${{env.IMAGE_NAME}}:$GITHUB_RUN_ID ${{ steps.login_ecr.outputs.registry }}/${{ steps.pipeline_config.outputs.ecr_repo_name }}:$GITHUB_RUN_ID
+
+      - name: "Push Docker image to ECR"
+        run: |
+          docker push ${{ steps.login_ecr.outputs.registry }}/${{ steps.pipeline_config.outputs.ecr_repo_name }}:$GITHUB_RUN_ID
+
+      - name: Setup terraform
+        uses: hashicorp/setup-terraform@v2
+
+      - name: Terraform apply
+        run: |
+          cd iac
+          terraform init
+          terraform apply -auto-approve
+
