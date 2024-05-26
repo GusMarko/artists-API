@@ -149,7 +149,7 @@ resource "aws_lambda_function" "main" {
 # podesavanje trigera
 
 resource "aws_lambda_event_source_mapping" "allow_dynamodb_table_to_trigger_lambda" {
-  event_source_arn  = aws_dynamodb_table.artists.stream_arn
+  event_source_arn  = data.aws_dynamodb_table.artists.stream_arn
   function_name     = aws_lambda_function.main.arn
   starting_position = "LATEST"
 }
