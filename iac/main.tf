@@ -6,11 +6,11 @@ data "aws_dynamodb_table" "artists" {
 }
 
 data "aws_ssm_parameter" "priv_sub_id" {
-  name = "/vpc/${var.env}/private_subnet/id"
+  name = "/vpc/dev/private_subnet/id"
 }
 
 data "aws_ssm_parameter" "vpc_id" {
-  name = "/vpc/${var.env}/id"
+  name = "/vpc/dev/id"
 }
 
 data "aws_s3_bucket" "songs" {
@@ -129,6 +129,7 @@ resource "aws_lambda_function" "main" {
   package_type  = "Image"
   image_uri     = var.image_uri
 
+
   environment {
     variables = {
       ARTISTS_TABLE = data.aws_dynamodb_table.artists.id
@@ -147,23 +148,13 @@ resource "aws_lambda_function" "main" {
 
 # podesavanje trigera
 
-
-resource "aws_lambda_permission" "allow_bucket" {
-  statement_id  = "AllowExecutionFromS3Bucket-${var.env}"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.main.arn
-  principal     = "s3.amazonaws.com"
-  source_arn    = data.aws_s3_bucket.songs.arn
+resource "aws_lambda_event_source_mapping" "allow_dynamodb_table_to_trigger_lambda" {
+  event_source_arn  = aws_dynamodb_table.artists.stream_arn
+  function_name     = aws_lambda_function.main.arn
+  starting_position = "LATEST"
 }
 
-resource "aws_s3_bucket_notification" "bucket_notification" {
-  bucket = data.aws_s3_bucket.songs.id
 
-  lambda_function {
-    lambda_function_arn = aws_lambda_function.main.arn
-    events              = ["s3:ObjectCreated:*"]
-    filter_suffix       = ".csv"
-  }
 
-  depends_on = [aws_lambda_permission.allow_bucket]
-}
+
+# depends_on = [aws_lambda_permission.allow_bucket]
