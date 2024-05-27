@@ -1,8 +1,8 @@
 # prikupljanje podataka vec ostojecih resursa
 
 
-data "aws_dynamodb_table" "artists" {
-  name = "project1-artists-${var.env}"
+data "aws_s3_bucket" "artists" {
+  bucket = "project1-artists-${var.env}"
 }
 
 data "aws_ssm_parameter" "priv_sub_id" {
@@ -106,7 +106,7 @@ resource "aws_iam_policy" "s3_access" {
         "Action": [
             "s3:*"
         ],
-        "Resource": "${data.aws_s3_bucket.songs.arn}"
+        "Resource": "${data.aws_s3_bucket.songs.arn}", "${data.aws_s3_bucket.artists.arn}"
     }
 ]
 
@@ -149,7 +149,6 @@ resource "aws_lambda_function" "main" {
 # podesavanje trigera
 
 
-
 resource "aws_lambda_permission" "allow_bucket" {
   statement_id  = "AllowExecutionFromS3Bucket-${var.env}"
   action        = "lambda:InvokeFunction"
@@ -158,14 +157,15 @@ resource "aws_lambda_permission" "allow_bucket" {
   source_arn    = data.aws_s3_bucket.songs.arn
 }
 
+
 resource "aws_s3_bucket_notification" "bucket_notification" {
   bucket = data.aws_s3_bucket.songs.id
-
   lambda_function {
     lambda_function_arn = aws_lambda_function.main.arn
     events              = ["s3:ObjectCreated:*"]
     filter_suffix       = ".csv"
   }
 
-  depends_on = [aws_lambda_permission.allow_bucket]
-}
+
+
+
