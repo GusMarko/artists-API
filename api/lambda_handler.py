@@ -34,13 +34,9 @@ def lambda_handler(event, context):
     for song in songs_list:
         artists_list.append(get_artist(song))
 
-    ### upisivanje artista iz liste u dynamo db
-    dynamodb = boto3.resource("dynamodb")
-    table = dynamodb.Table(os.getenv("ARTISTS_TABLE"))
-    id_num = str(uuid.uuid4().hex)
-
-    for artist in artists_list:
-        table.put_item(
-            Item={"DataId": id_num, "ArtistName": artist},
-        )
-        id_num = str(uuid.uuid4().hex)
+    ### upisivanje artista iz liste u drugi s3 bucket
+    destinations3 = boto3.resource("s3")
+    destination_bucket = "project1-artists-${var.env}"
+    body = "\n".join(artists_list)
+    object = s3.Object("project1-artists-${var.env}", "project1/artists.txt")
+    object.put(Body=body)
