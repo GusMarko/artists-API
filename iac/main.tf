@@ -109,7 +109,7 @@ resource "aws_lambda_function" "main" {
 
   environment {
     variables = {
-      OUTPUT_BUCKET_NAME = data.aws_s3_bucket.artists.name
+      OUTPUT_BUCKET_NAME = data.aws_s3_bucket.artists.id
       CLIENT_ID          = var.client_id
       CLIENT_SECRET      = var.client_secret
     }
