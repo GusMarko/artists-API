@@ -36,7 +36,10 @@ def lambda_handler(event, context):
 
     ### upisivanje artista iz liste u drugi s3 bucket
     destinations3 = boto3.resource("s3")
-    destination_bucket = "project1-artists-${var.env}"
+    destination_bucket = os.getenv("OUTPUT_BUCKET_NAME")
     body = "\n".join(artists_list)
-    object = s3.Object("project1-artists-${var.env}", "project1/artists.txt")
+    id_num = str(uuid.uuid4().hex)
+    object = s3.Object(
+        os.getenv("OUTPUT_BUCKET_NAME"), f"project1/artists-{id_num}.txt"
+    )
     object.put(Body=body)
