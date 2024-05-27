@@ -62,29 +62,6 @@ resource "aws_iam_role" "main" {
 
 }
 
-
-data "aws_iam_policy_document" "dynamodb_access" {
-  statement {
-    actions = [
-      "dynamodb:*"
-    ]
-    resources = [data.aws_dynamodb_table.artists.arn]
-    effect    = "Allow"
-  }
-}
-
-
-resource "aws_iam_policy" "dynamodb_access" {
-  name   = "project1-artists-dynamodb-access-${var.env}"
-  policy = data.aws_iam_policy_document.dynamodb_access.json
-}
-
-resource "aws_iam_role_policy_attachment" "dynamodb_access" {
-  role       = aws_iam_role.main.name
-  policy_arn = aws_iam_policy.dynamodb_access.arn
-}
-
-
 resource "aws_iam_role_policy_attachment" "vpc_policy_for_lambda" {
   role       = aws_iam_role.main.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole" #AWS predefined policy
