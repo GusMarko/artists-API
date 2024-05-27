@@ -83,7 +83,7 @@ resource "aws_iam_policy" "s3_access" {
         "Action": [
             "s3:*"
         ],
-        "Resource": "${data.aws_s3_bucket.songs.arn}", "${data.aws_s3_bucket.artists.arn}"
+        "Resource": ["${data.aws_s3_bucket.songs.arn}","${data.aws_s3_bucket.songs.arn}/*", "${data.aws_s3_bucket.artists.arn}","${data.aws_s3_bucket.artists.arn}/*"]
     }
 ]
 
@@ -109,9 +109,9 @@ resource "aws_lambda_function" "main" {
 
   environment {
     variables = {
-      ARTISTS_TABLE = data.aws_dynamodb_table.artists.id
-      CLIENT_ID     = var.client_id
-      CLIENT_SECRET = var.client_secret
+      OUTPUT_BUCKET_NAME = data.aws_s3_bucket.artists.name
+      CLIENT_ID          = var.client_id
+      CLIENT_SECRET      = var.client_secret
     }
   }
 
