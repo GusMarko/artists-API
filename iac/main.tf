@@ -148,6 +148,7 @@ resource "aws_lambda_function" "main" {
 
 # podesavanje trigera
 
+
 resource "aws_lambda_permission" "allow_bucket" {
   statement_id  = "AllowExecutionFromS3Bucket-${var.env}"
   action        = "lambda:InvokeFunction"
@@ -156,14 +157,15 @@ resource "aws_lambda_permission" "allow_bucket" {
   source_arn    = data.aws_s3_bucket.songs.arn
 }
 
+
 resource "aws_s3_bucket_notification" "bucket_notification" {
   bucket = data.aws_s3_bucket.songs.id
-
   lambda_function {
     lambda_function_arn = aws_lambda_function.main.arn
     events              = ["s3:ObjectCreated:*"]
     filter_suffix       = ".csv"
   }
 
-  depends_on = [aws_lambda_permission.allow_bucket]
-}
+
+
+
