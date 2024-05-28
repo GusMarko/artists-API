@@ -9,7 +9,7 @@ import uuid
 import urllib.parse
 
 # pravi se sesija sa s3
-s3 = boto3.resource("s3")
+s3 = boto3.client("s3")
 
 
 def lambda_handler(event, context):
