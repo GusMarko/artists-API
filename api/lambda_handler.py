@@ -14,6 +14,7 @@ s3 = boto3.client("s3")
 
 def lambda_handler(event, context):
     s3 = boto3.client("s3")
+    s3_res = boto3.resource("s3")
     # iz metadata od eventa vadimo bucket i fajl koji nam treba
     bucket = event["Records"][0]["s3"]["bucket"]["name"]
     key = urllib.parse.unquote_plus(
@@ -40,7 +41,7 @@ def lambda_handler(event, context):
     destination_bucket = os.getenv("OUTPUT_BUCKET_NAME")
     body = "\n".join(artists_list)
     id_num = str(uuid.uuid4().hex)
-    object = s3.Object(
+    object = s3_res.Object(
         os.getenv("OUTPUT_BUCKET_NAME"), f"project1/artists-{id_num}.txt"
     )
     object.put(Body=body)
