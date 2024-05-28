@@ -13,7 +13,7 @@ s3 = boto3.client("s3")
 
 
 def lambda_handler(event, context):
-    s3 = boto3.resource("s3")
+    s3 = boto3.client("s3")
     # iz metadata od eventa vadimo bucket i fajl koji nam treba
     bucket = event["Records"][0]["s3"]["bucket"]["name"]
     key = urllib.parse.unquote_plus(
